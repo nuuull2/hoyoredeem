@@ -1,0 +1,38 @@
+name: Auto Redeem
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: "10 4,16 * * *"
+  
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Auto Redeem
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+    - name: Run script
+      run: python main.py
+      env:
+        MY_COOKIE_TOKEN: ${{ secrets.MY_COOKIE_TOKEN }}
+        MY_MID: ${{ secrets.MY_MID }}
+        ALT_COOKIE_TOKEN: ${{ secrets.ALT_COOKIE_TOKEN }}
+        ALT_MID: ${{ secrets.ALT_MID }}
+
+  keepalive:
+      name: Keepalive
+      runs-on: ubuntu-latest
+      permissions:
+        actions: write
+      steps:
+        - uses: actions/checkout@v4
+        - uses: gautamkrishnar/keepalive-workflow@v2
