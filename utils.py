@@ -6,33 +6,24 @@ import asyncio
 import re
 
 CODES_URL = {
-    Game.GENSHIN: "https://genshin-impact.fandom.com/wiki/Promotional_Code",
-    Game.STARRAIL: "https://honkai-star-rail.fandom.com/wiki/Redemption_Code",
-    Game.ZZZ: "https://game8.co/games/Zenless-Zone-Zero/archives/435683"
+    Game.GENSHIN: "https://traveler.gg/codes",
+    Game.STARRAIL: "https://honkai.gg/codes",
+    Game.ZZZ: "https://zenless.gg/codes"
 }
 
 async def get_codes_upstream(game):
     headers = {
-        'User-Agent': "Opera/9.50 (J2ME/MIDP; Opera Mini/5.1.21965/20.2513; U; en)"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0"
     }
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(CODES_URL[game]) as response:
+        async with session.get(CODES_URL[game], headers=headers) as response:
             if not response.status == 200:
                 return None
             
-            response_text = await response.text()
+            active_codes = re.search(r'Active Codes(?:</span>|</h1>)(?s:.*?)</tbody>', await response.text()).group(0)
 
-            if game == Game.GENSHIN:
-                return re.findall(r'en/gift\?code=(.+?)"', response_text)
-            elif game == Game.STARRAIL:
-                rows = [ x for x in re.findall(r'<tr.*?>(?s:.*?)<\/tr>', response_text) if "Valid" in x ]
-                return list(map(lambda x: re.search(r'com/gift\?code=(.+?)"', x).group(1), rows))
-            elif game == Game.ZZZ:
-                table = re.search(r'Active Redeem Codes(?s:.*?)</tbody>', response_text).group(0)
-                return re.findall(r"redemption\?code=(.+?) ", table)
-            else:
-                return None
+            return re.findall(r'(?:redemption|gift)\?code=(.+?)"', active_codes)
 
 async def get_codes_history(game):
     if os.environ.get("GITHUB_ACTIONS") == "true":
