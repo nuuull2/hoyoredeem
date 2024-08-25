@@ -6,9 +6,9 @@ import asyncio
 import re
 
 CODES_URL = {
-    Game.GENSHIN: "https://traveler.gg/codes",
-    Game.STARRAIL: "https://honkai.gg/codes",
-    Game.ZZZ: "https://zenless.gg/codes"
+    Game.GENSHIN: "https://traveler.gg/wp-json/wp/v2/posts/4200",
+    Game.STARRAIL: "https://honkai.gg/wp-json/wp/v2/posts/11105",
+    Game.ZZZ: "https://zenless.gg/wp-json/wp/v2/posts/1828"
 }
 
 async def get_codes_upstream(game):
@@ -20,8 +20,11 @@ async def get_codes_upstream(game):
         async with session.get(CODES_URL[game], headers=headers) as response:
             if not response.status == 200:
                 return None
+
+            response_json = await response.json()
+            page_content = response_json["content"]["rendered"]
             
-            active_codes = re.search(r'Active Codes(?:</span>|</h1>)(?s:.*?)</tbody>', await response.text()).group(0)
+            active_codes = re.search(r'Active Codes(?:</h1>|</h2>)(?s:.*?)</tbody>', page_content).group(0)
 
             return re.findall(r'(?:redemption|gift)\?code=(.+?)"', active_codes)
 
