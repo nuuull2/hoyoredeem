@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
     - name: Run script
-      run: python main.py
+      run: python -u main.py
       env:
         MY_COOKIE_TOKEN: ${{ secrets.MY_COOKIE_TOKEN }}
         MY_MID: ${{ secrets.MY_MID }}
