@@ -23,5 +23,6 @@ async def main():
                     sleep(5)
             else:
                 print(f"[{game.value.upper()}] No new codes available")
+                sleep(5)
 
 asyncio.run(main())
