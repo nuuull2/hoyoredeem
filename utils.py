@@ -6,9 +6,9 @@ import asyncio
 import re
 
 CODES_URL = {
-    Game.GENSHIN: "https://genshin-impact.fandom.com/wiki/Promotional_Code",
-    Game.STARRAIL: "https://honkai.gg/codes",
-    Game.ZZZ: "https://zenless.gg/codes"
+    Game.GENSHIN: "https://game8.co/games/Genshin-Impact/archives/304759",
+    Game.STARRAIL: "https://game8.co/games/Honkai-Star-Rail/archives/410296",
+    Game.ZZZ: "https://game8.co/games/Zenless-Zone-Zero/archives/435683"
 }
 
 async def get_codes_upstream(game):
@@ -22,10 +22,15 @@ async def get_codes_upstream(game):
                 return None
 
             response_text = await response.text()
-            
-            active_codes = re.search(r'Active Codes(?:</h1>|</h2>|</span>)(?s:.*?)</tbody>', response_text).group(0)
 
-            return re.findall(r'(?:redemption|gift)\?code=(.+?)"', active_codes)
+            if game == Game.STARRAIL:
+                active_codes = ''.join(re.findall(r'New Redeem(?s:.*?)</ul>|Livestream Codes(?s:.*?)</ul>', response_text))
+            elif game == Game.GENSHIN:
+                active_codes = re.search(r'Latest Redeem(?s:.*?)CN-Exclusive Codes', response_text).group()
+            else:
+                active_codes = ''.join(re.findall(r'Codes for(?s:.*?)</ul>|Livestream Redeem Codes(?s:.*?)</ul>', response_text))
+                
+            return re.findall(r'(?:redemption|gift)\?code=([\w\d]+)', active_codes)
 
 async def get_codes_history(game):
     if os.environ.get("GITHUB_ACTIONS") == "true":
