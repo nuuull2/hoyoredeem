@@ -28,7 +28,7 @@ async def get_codes_upstream(game):
             elif game == Game.GENSHIN:
                 active_codes = re.search(r'Active Redeem(?s:.*?)CN-Exclusive Codes', response_text).group()
             else:
-                active_codes = ''.join(re.findall(r'Codes for(?s:.*?)</ul>|Livestream Redeem Codes(?s:.*?)</ul>', response_text))
+                active_codes = ''.join(re.findall(r'Codes? for(?s:.*?)</ul>|Livestream Codes(?s:.*?)</ul>', response_text))
                 
             return re.findall(r'(?:redemption|gift)\?code=([\w\d]+)', active_codes)
 
@@ -73,7 +73,7 @@ async def set_codes_history(game, codes):
             async with session.patch(f"https://api.github.com/repos/{os.environ.get("GITHUB_REPOSITORY")}/actions/variables/{game.value.upper()}_HISTORY", headers=headers, json=body) as response:
                 if not response.status == 204:
                    print("Can't access repository variables. Please check your credentials.")
-                   exit()
+                   exit(1)
 
 async def get_codes(game):
     if f"{game.value.upper()}_CODES" in os.environ:
