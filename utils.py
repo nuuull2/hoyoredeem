@@ -26,7 +26,7 @@ async def get_codes_upstream(game):
             if game == Game.STARRAIL:
                 active_codes = ''.join(re.findall(r'New Redeem(?s:.*?)</ul>|Livestream Codes(?s:.*?)</ul>', response_text))
             elif game == Game.GENSHIN:
-                active_codes = re.search(r'All Codes(?s:.*?)CN-Exclusive Codes', response_text).group()
+                active_codes = re.search(r'All New Codes(?s:.*?)CN-Exclusive Codes', response_text).group()
             else:
                 active_codes = ''.join(re.findall(r'Codes? for(?s:.*?)</ul>|Livestream Codes(?s:.*?)</ul>', response_text))
                 
