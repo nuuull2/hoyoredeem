@@ -12,7 +12,7 @@ async def main():
 
         for game in account["games"]:
             uid = await client._get_uid(game)
-            print(f"\n-- {game.value.upper()} | UID{uid[0:3]}*** --")
+            print(f"\n-- {game.value.upper()} | UID{str(uid)[0:3]}*** --")
 
             codes = await get_codes(game)
             if codes:
