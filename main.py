@@ -11,9 +11,9 @@ async def main():
         client = genshin.Client(cookies)
 
         for game in account["games"]:
-            uid = client._get_uid(game)
+            uid = await client._get_uid(game)
             print(f"\n-- {game.value.upper()} | UID{uid[0:3]}*** --")
-            
+
             codes = await get_codes(game)
             if codes:
                 for code in codes:
