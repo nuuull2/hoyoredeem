@@ -11,18 +11,21 @@ async def main():
         client = genshin.Client(cookies)
 
         for game in account["games"]:
+            uid = client._get_uid(game)
+            print(f"\n-- {game.value.upper()} | UID{uid[0:3]}*** --")
+            
             codes = await get_codes(game)
             if codes:
                 for code in codes:
                     try:
                         await client.redeem_code(code, game=game)
                     except Exception as e:
-                        print(e.msg)
+                        print(f"[{code}] {e.msg}")
                     else:
-                        print("Code redeemed successfully.")
+                        print(f"[{code}] Code redeemed successfully.")
                     sleep(5)
             else:
-                print(f"[{game.value.upper()}] No new codes available")
+                print(f"No new codes available")
                 sleep(5)
 
 asyncio.run(main())
