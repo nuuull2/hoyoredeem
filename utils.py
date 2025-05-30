@@ -23,14 +23,7 @@ async def get_codes_upstream(game):
 
             response_text = await response.text()
 
-            if game == Game.STARRAIL:
-                active_codes = ''.join(re.findall(r'New Redeem(?s:.*?)</ul>|Livestream Codes(?s:.*?)</ul>', response_text))
-            elif game == Game.GENSHIN:
-                active_codes = re.search(r'Active Redeem(?s:.*?)CN-Exclusive Codes', response_text).group()
-            else:
-                active_codes = ''.join(re.findall(r'Codes? for(?s:.*?)</ul>|Livestream Codes(?s:.*?)</ul>', response_text))
-                
-            return re.findall(r'(?:redemption|gift)\?code=([\w\d]+)', active_codes)
+            return re.findall(r'(?:redemption|gift)\?code=([\w\d]+)', response_text)
 
 async def get_codes_history(game):
     if os.environ.get("GITHUB_ACTIONS") == "true":
