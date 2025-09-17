@@ -37,7 +37,7 @@ async def get_codes_history(game):
             async with session.get(f"https://api.github.com/repos/{os.environ.get("GITHUB_REPOSITORY")}/actions/variables/{game.value.upper()}_HISTORY", headers=headers) as response:
                 if not response.status == 200:
                     print("Can't access repository variables. Please check your credentials.")
-                    exit()
+                    exit(1)
                 
                 response_json = await response.json()
 
